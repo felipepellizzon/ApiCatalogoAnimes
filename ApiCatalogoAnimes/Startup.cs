@@ -1,7 +1,11 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
+using ApiCatalogoAnimes.Controllers.V1;
+using ApiCatalogoAnimes.Middleware;
 using ApiCatalogoAnimes.Repositories;
 using ApiCatalogoAnimes.Services;
 using Microsoft.AspNetCore.Builder;
@@ -32,11 +36,22 @@ namespace ApiCatalogoAnimes
             services.AddScoped<IAnimeService, AnimeService>();
             services.AddScoped<IAnimeRepository, AnimeRepository>();
 
+            #region CicloDeVida
+
+            services.AddSingleton<IExemploSingleton, ExemploCicloDeVida>();
+            services.AddScoped<IExemploScoped, ExemploCicloDeVida>();
+            services.AddTransient<IExemploTransient, ExemploCicloDeVida>();
+
+            #endregion
 
             services.AddControllers();
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "ApiCatalogoAnimes", Version = "v1" });
+
+                var basePath = AppDomain.CurrentDomain.BaseDirectory;
+                var fileName = typeof(Startup).GetTypeInfo().Assembly.GetName().Name + ".xml";
+                c.IncludeXmlComments(Path.Combine(basePath, fileName));
             });
         }
 
@@ -49,6 +64,8 @@ namespace ApiCatalogoAnimes
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "ApiCatalogoAnimes v1"));
             }
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 
