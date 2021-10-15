@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using ApiCatalogoAnimes.Exceptions;
 using ApiCatalogoAnimes.InputModel;
 using ApiCatalogoAnimes.Services;
 using ApiCatalogoAnimes.ViewModel;
@@ -52,8 +53,7 @@ namespace ApiCatalogoAnimes.Controllers.V1
 
                 return Ok(anime);
             }
-            //catch(AnimeJaCadastradoException ex)
-            catch(Exception ex)
+            catch(AnimeJaCadastradoException ex)
             {
                 return UnprocessableEntity("Já existe um anime com este nome para esta produtora");
             }
@@ -68,23 +68,21 @@ namespace ApiCatalogoAnimes.Controllers.V1
                 await _animeService.Atualizar(idAnime, animeInputModel);
                 return Ok();
             }
-            //catch (AnimeJaCadastradoException ex)
-            catch(Exception ex)
+            catch (AnimeJaCadastradoException ex)
             {
                 return NotFound("Não existe este anime.");
             }
         }
 
-        [HttpPatch("{idAnime:guid}/genero/{genero:string}")]
-        public async Task<ActionResult> AtualizarAnime([FromRoute]Guid idAnime,[FromRoute] string genero)
+        [HttpPatch("{idAnime:guid}/nota/{nota:int}")]
+        public async Task<ActionResult> AtualizarAnime([FromRoute]Guid idAnime,[FromRoute] int nota)
         {
             try
             {
-                await _animeService.Atualizar(idAnime, genero);
+                await _animeService.Atualizar(idAnime, nota);
                 return Ok();
             }
-            //catch (AnimeJaCadastradoException ex)
-            catch (Exception ex)
+            catch (AnimeJaCadastradoException ex)
             {
                 return NotFound("Não existe este anime.");
             }
@@ -98,8 +96,7 @@ namespace ApiCatalogoAnimes.Controllers.V1
                 await _animeService.Remover(idAnime);
                 return Ok();
             }
-            //catch (AnimeJaCadastradoException ex)
-            catch (Exception ex)
+            catch (AnimeJaCadastradoException ex)
             {
                 return NotFound("Não existe este anime.");
             }

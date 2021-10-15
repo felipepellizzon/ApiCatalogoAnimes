@@ -18,7 +18,7 @@ namespace ApiCatalogoAnimes.InputModel
 
         [Required]
         [Range(1, 10, ErrorMessage = "A nota do anime deve ser de 1 a 10.")]
-        public byte Nota { get; set; }
+        public int Nota { get; set; }
 
     }
 }
